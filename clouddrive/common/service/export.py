@@ -241,8 +241,8 @@ class ExportService(object):
                     on_before_change(change, pending_changes, changes_done, retry_changes, ignored, export)
                 
                 change_type = self.process_change(change, items_info, export)
-                self.export_manager.save_items_info(exportid, items_info)
-                self.export_manager.save_pending_changes(exportid, pending_changes)
+                # self.export_manager.save_items_info(exportid, items_info)
+                # self.export_manager.save_pending_changes(exportid, pending_changes)
                 is_retry = False
                 if change_type:
                     if change_type[-6:] == "_retry":
@@ -254,13 +254,14 @@ class ExportService(object):
                         if change_type == 'create_folder' or (change_type == 'create_folder_ignored' and Utils.get_safe_value(change, 'origin', '') == 'schedule'):
                             before_add_item = lambda item: self.on_before_add_item(change, item)
                             pending_changes.extendleft(self.get_folder_changes(export['driveid'], change, before_add_item))
-                            self.export_manager.save_pending_changes(exportid, pending_changes)
+                            # self.export_manager.save_pending_changes(exportid, pending_changes)
                 else:
                     ignored += 1
                 if on_after_change:
                     on_after_change(change, change_type, pending_changes, changes_done, retry_changes, ignored, export)
                 if is_retry:
                     self.export_manager.save_retry_changes(exportid, deque(retry_changes))
+            self.export_manager.save_items_info(exportid, items_info)
         return changes_done
     
     def process_watch(self):
